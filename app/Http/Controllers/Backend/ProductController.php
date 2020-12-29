@@ -119,13 +119,23 @@ class ProductController extends Controller
         $data['brands']=Brand::all();
         $data['colors']=Color::all();
         $data['sizes']=Size::all();
+        $data['color_array']=ProductColor::select('color_id')->where('product_id',$data['productsEdit']->id)
+        ->orderBy('id','asc')
+        ->get()
+        ->toArray();
+
+        $data['size_array']=ProductSize::select('size_id')->where('product_id',$data['productsEdit']->id)
+        ->orderBy('id','asc')
+        ->get()
+        ->toArray();
         return view('backend.product.create-product',$data);
     }
 
     //update function is here.......................
+
     public function update(Request $request, $id)
     {
-        DB::transaction(function () use($request) {
+        DB::transaction(function () use($request,$id) {
             $validatedData = $request->validate([
                 'name' => 'required|unique:products,name',
                 'color_id' => 'required',
@@ -145,10 +155,23 @@ class ProductController extends Controller
        if($img){
            $imgName=date('YmdHi').$img->getClientOriginalName();
            $img->move('public/upload/user_images/',$imgName);
+           if(file_exists('public/upload/user_images/'.$UpdateProduct->image)AND ! empty($UpdateProduct->image))
+           {
+            unlink('public/upload/user_images/'.$UpdateProduct->image);
+           }
            $UpdateProduct['image']=$imgName;
        }
         if($UpdateProduct->save()){
             $files=$request->sub_image;
+            if(!empty($files)){
+                $SubImages=ProductSubImage::where('product_id',$id)->get()->toArray();
+                foreach($SubImages as $SubImage){
+                   if(!empty($SubImage)){
+                       unlink('public/upload/user_images/product_sub_images/'.$SubImage['sub_image']);
+                   }
+                }
+                ProductSubImage::where('product_id',$id)->delete();
+            }
             if(!empty($files)){
                 foreach($files as $file){
                     $imgName=date('YmdHi').$img->getClientOriginalName();
@@ -162,6 +185,9 @@ class ProductController extends Controller
             }
             $colors=$request->color_id;
             if(!empty($colors)){
+                ProductColor::where('product_id',$id)->delete();
+            }
+            if(!empty($colors)){
                 foreach($colors as $color){
                     $myColor=new ProductColor();
                     $myColor->product_id=$UpdateProduct->id;
@@ -170,6 +196,9 @@ class ProductController extends Controller
                 }
             }
             $sizes=$request->size_id;
+            if(!empty($sizes)){
+                ProductSize::where('product_id',$id)->delete();
+            }
             if(!empty($sizes)){
                 foreach($sizes as $size){
                     $mySize=new ProductSize();
@@ -189,9 +218,9 @@ class ProductController extends Controller
     //delete function is here...........................
     public function destroy($id)
     {
-        $size=Size::find($id);
-        $size->delete();
-       return redirect()->route('size.view');
+        $product=Product::find($id);
+        $product->delete();
+       return redirect()->route('product.view');
     }
 }
 

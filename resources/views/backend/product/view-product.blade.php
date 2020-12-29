@@ -56,7 +56,7 @@
                         <td>{{$product->brand->name}}</td>
                         <td>{{$product->name}}</td>
                         <td>{{$product->price}}</td>
-                        <td><img src="{{asset('public/upload/user_images/product_sub_images/'.$product->image)}}" width="60px";height='60px' alt=""></td>
+                        <td><img src="{{asset('public/upload/user_images/'.$product->image)}}" width="60px";height='60px' alt=""></td>
                         <td>
                             <a href="{{route('product.edit',$product->id)}}" class="btn btn-warning" title="Edit"><i class="fa fa-user-edit"></i></a>
                             <a href="{{route('product.destroy',$product->id)}} " id="delete" class="btn btn-danger" title="Delete"><i class="fa fa-trash"></i></a>

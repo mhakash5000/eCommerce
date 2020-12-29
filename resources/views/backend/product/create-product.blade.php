@@ -82,7 +82,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>Product Name</label>
-                            <input class="form-control-sm" type="text" style="width: 100%;" name="name" value="{{$productsEdit->name}} " placeholder="Enter Product Name" required />
+                            <input class="form-control-sm" type="text" style="width: 100%;" name="name" value="{{@$productsEdit->name}}" placeholder="Enter Product Name" required />
                             <font style="color:red">{{($errors->has('name'))?($errors->first('name')):''}} </font>
                         </div>
                     </div>
@@ -93,7 +93,7 @@
                             <label>Product Color</label>
                             <select class="form-control-sm select2"  style="width: 100%;" name="color_id[]" multiple required>
                             @foreach ($colors as $color)
-                                <option value="{{$color->id}}" {{(@$productsEdit->color_id==$color->id?"select2":" ")}}>{{$color->name}} </option>
+                                <option value="{{$color->id}}" {{(@in_array(['color_id'=>$color->id],$color_array))?"selected":""}}>{{$color->name}} </option>
                             @endforeach
                             <font style="color:red">{{($errors->has('color_id'))?($errors->first('color_id')):''}} </font>
                             </select>
@@ -104,7 +104,7 @@
                             <label>Product Size</label>
                             <select class="form-control-sm select2"  style="width: 100%;" name="size_id[]" multiple required>
                                 @foreach ($sizes as $size)
-                                <option value="{{$size->id}} ">{{$size->name}} </option>
+                                <option value="{{$size->id}}" {{(@in_array(['size_id'=>$size->id],$size_array))?"selected":""}}> {{$size->name}}</option>
                             @endforeach
                             <font style="color:red">{{($errors->has('size_id'))?($errors->first('size_id')):''}} </font>
                             </select>
@@ -115,7 +115,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Short Description</label>
-                             <textarea class="form-control" name="short_desc" id="" placeholder="Enter Your Short Description"></textarea>
+                             <textarea class="form-control" name="short_desc" id="" placeholder="Enter Your Short Description">{{@$productsEdit->short_desc}} </textarea>
                             <font style="color:red">{{($errors->has('short_desc'))?($errors->first('short_desc')):''}} </font>
                         </div>
                     </div>
@@ -124,7 +124,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Long Description</label>
-                             <textarea class="form-control" name="long_desc" id="" placeholder="Enter Your Long Description" rows="4"></textarea>
+                             <textarea class="form-control" name="short_desc" id="" placeholder="Enter Your Short Description">{{@$productsEdit->long_desc}} </textarea>
                             <font style="color:red">{{($errors->has('long_desc'))?($errors->first('long_desc')):''}} </font>
                         </div>
                     </div>
@@ -133,14 +133,14 @@
                     <div class="col-md-3">
                         <div class="form-group">
                         <label>Product Price</label>
-                        <input class="form-control-sm" type="number" style="width: 100%;" name="price" required />
+                        <input class="form-control-sm" type="number" style="width: 100%;" name="price" value="{{@$productsEdit->price}}" required />
                         <font style="color:red">{{($errors->has('price'))?($errors->first('price')):''}} </font>
                         </div>
                      </div>
                      <div class="col-md-6">
                         <div class="form-group">
                         <label>Image</label>
-                        <img src="{{asset('upload/user_images/')}}" id="image" style="width:445px;height:200px">
+                        <img src="{{(!empty($productsEdit->image))?url('public/upload/user_images/'.$productsEdit->image):url('public/upload/user_images')}} " id="image" style="width:445px;height:200px">
                         <input id="my-input" class="form-control" type="file" name="image" id="file" onchange="showImage(this,'image')" value=''>
                         </div>
                      </div>
